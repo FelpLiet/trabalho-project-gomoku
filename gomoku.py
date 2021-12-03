@@ -70,7 +70,32 @@ def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
 
 
 def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
-    # mude-me
+    qtd_seq_semiaberta = 0
+    qtd_seq_aberta = 0
+    comprimento_atual = 0
+
+    for i in range(len(tabuleiro) + 1):
+        if y_ini + d_y > len(tabuleiro) or x_ini + d_x > len(tabuleiro) or y_ini + d_y < 0 or x_ini + d_x < 0:
+            return qtd_seq_aberta, qtd_seq_semiaberta
+        elif tabuleiro[y_ini][x_ini] == cor:
+            comprimento_atual = verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x)
+            if comprimento == comprimento_atual:
+                estado = esta_limitada(tabuleiro, y_ini + ((comprimento - 1) * d_y), x_ini +((comprimento -1) * d_x),
+                                       comprimento, d_y,d_x)
+                if estado == "ABERTA":
+                    qtd_seq_aberta += 1
+                if estado == "SEMIABERTA":
+                    qtd_seq_semiaberta += 1
+
+                y_ini += (comprimento - 1) * d_y
+                x_ini += (comprimento - 1) * d_x
+            else:
+                y_ini += (comprimento_atual - 1) * d_y
+                x_ini += (comprimento_atual - 1) * d_x
+
+        y_ini += d_y
+        x_ini += d_x
+
     return qtd_seq_aberta, qtd_seq_semiaberta
 
 
