@@ -12,11 +12,61 @@ Outras funções tem "mude-me".
 
 
 def esta_vazia(tabuleiro):
-    pass
+    for i in range(len(tabuleiro)):
+        for j in range(len(tabuleiro[i])):
+            if tabuleiro[i][j] != " ":
+                return False
+    return True
 
 
 def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
-    pass
+    estado_incial = ""
+    estado_final = ""
+
+    # checa de y_fim e x_fim sao coodenadas validas
+    if (max(y_fim, x_fim) >= len(tabuleiro)) or (min(y_fim + d_y, x_fim + d_x) < 0):
+        return "FECHADA"
+
+    # verifica o fim adjacente a y_fim e x_fim
+    if (min(y_fim + d_y, x_fim + d_x) < 0) or (max(y_fim + d_y, x_fim + d_x) >= len(tabuleiro)):
+        estado_final = "FECHADA"
+    elif tabuleiro[y_fim + d_y][x_fim + d_x] == " ":
+        estado_final = "ABERTA"
+    else:
+        estado_final = "FECHADA"
+
+    # verifica o fianl oposto a y_fim e x_fim
+    if (min(y_fim - (d_y * comprimento), x_fim - (d_x * comprimento)) < 0) or (
+            max(y_fim - (d_y * comprimento), x_fim - (d_x * comprimento)) >= len(tabuleiro)):
+        estado_incial = "FECHADA"
+    elif tabuleiro[y_fim - (d_y * comprimento)][x_fim - (d_x * comprimento)] == " ":
+        estado_incial = "ABERTA"
+    else:
+        estado_incial = "FECHADA"
+
+    # analiza o estado em que se encontra
+    if estado_final != estado_incial:
+        return "SEMIABERTA"
+    elif estado_incial == "ABERTA" and estado_final == "ABERTA":
+        return "ABERTA"
+    else:
+        return "FECHADA"
+
+
+def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
+
+    y = y_ini
+    x = x_ini
+    comprimento = 0
+
+    if tabuleiro[y_ini][x_ini] != cor:
+        return 0
+    for i in range(len(tabuleiro)):
+        if(max(y + d_y, x + d_x) >= len(tabuleiro)) or (min(y + d_y, x + d_x) < 0) or tabuleiro[y + d_y][x + d_x] != cor:
+            return comprimento
+        comprimento += 1
+        y += d_y
+        x += d_x
 
 
 def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
