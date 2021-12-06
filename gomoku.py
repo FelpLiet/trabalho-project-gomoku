@@ -19,12 +19,22 @@ def esta_vazia(tabuleiro):
     return True
 
 
+def esta_cheia(tabuleiro):
+    """Retorna se o tabuleiro esta cheio de peças ou não"""
+    for i in range(len(tabuleiro)):
+        for j in range(len(tabuleiro[i])):
+            if tabuleiro[i][j] == " ":
+                return False
+    return True
+
+
 def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
+    """Restorna se a sequencia esta aberta, fechada ou semiaberta de acordo com a posicao dela"""
     estado_incial = ""
     estado_final = ""
 
     # checa de y_fim e x_fim sao coodenadas validas
-    if (max(y_fim, x_fim) >= len(tabuleiro)) or (min(y_fim + d_y, x_fim + d_x) < 0):
+    if (max(y_fim, x_fim) >= len(tabuleiro)) or (min(y_fim, x_fim) < 0):
         return "FECHADA"
 
     # verifica o fim adjacente a y_fim e x_fim
@@ -53,7 +63,7 @@ def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
         return "FECHADA"
 
 
-def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
+def verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x):
     """Retorna um comprimento inteiro que é o comprimento da sequência da coluna de cores,
        começando em (y_início, x_início) e procedendo na direção (d_y, d_x)
        Suponha que o tabuleiro seja uma matriz nXn, col é um de 'p' ou 'b', (y_ini, x_ini) são coordenadas no
@@ -61,13 +71,14 @@ def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
 
     y = y_ini
     x = x_ini
-    comprimento = 0
+    comprimento = 1
 
     if tabuleiro[y_ini][x_ini] != cor:
         return 0
 
     for i in range(len(tabuleiro)):
-        if(max(y + d_y, x + d_x) >= len(tabuleiro)) or (min(y + d_y, x + d_x) < 0) or tabuleiro[y + d_y][x + d_x] != cor:
+        if (max(y + d_y, x + d_x) >= len(tabuleiro)) or (min(y + d_y, x + d_x) < 0) or tabuleiro[y + d_y][
+            x + d_x] != cor:
             return comprimento
         comprimento += 1
         y += d_y
@@ -90,8 +101,8 @@ def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
         elif tabuleiro[y_ini][x_ini] == cor:
             comprimento_atual = verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x)
             if comprimento == comprimento_atual:
-                estado = esta_limitada(tabuleiro, y_ini + ((comprimento - 1) * d_y), x_ini +((comprimento -1) * d_x),
-                                       comprimento, d_y,d_x)
+                estado = esta_limitada(tabuleiro, y_ini + ((comprimento - 1) * d_y), x_ini + ((comprimento - 1) * d_x),
+                                       comprimento, d_y, d_x)
                 if estado == "ABERTA":
                     qtd_seq_aberta += 1
                 if estado == "SEMIABERTA":
@@ -105,8 +116,6 @@ def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
 
         y_ini += d_y
         x_ini += d_x
-
-
 
 
 def detecta_linha_vence(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
@@ -132,14 +141,96 @@ def detecta_linha_vence(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
 
 
 def detecta_linhas(tabuleiro, cor, comprimento):
-    # mude-me
+    """Retorne uma tupla do número de sequências abertas e semiabertas de cores e comprimentos a bordo.
+       Suponha que placa seja uma matriz nxn, col é um de 'p' ou 'b' e o comprimento é um int positivo maior
+       que um e menor que 6.
+       Board é uma matriz nxn armazenada como uma lista de listas,
+       col é um de 'p' ou 'b' e o comprimento é um int positivo maior que um. """
     qtd_seq_aberta, qtd_seq_semiaberta = 0, 0
+
+    # teste de linhas
+    for linha in range(len(tabuleiro)):
+        quantidade_tuplas = detecta_linha(tabuleiro, cor, linha, 0, comprimento, 0, 1)
+        qtd_seq_aberta += quantidade_tuplas[0]
+        qtd_seq_semiaberta += quantidade_tuplas[1]
+
+    # teste de colunas
+    for coluna in range(len(tabuleiro)):
+        quantidade_tuplas = detecta_linha(tabuleiro, cor, 0, coluna, comprimento, 1, 0)
+        qtd_seq_aberta += quantidade_tuplas[0]
+        qtd_seq_semiaberta += quantidade_tuplas[1]
+
+    # teste de diagonais
+    for diagonal in range(len(tabuleiro) - 1):
+        for direcao in (1, -1):
+            quantidade_tuplas = detecta_linha(tabuleiro, cor, 0, diagonal, comprimento, 1, direcao)
+            qtd_seq_aberta += quantidade_tuplas[0]
+            qtd_seq_semiaberta += quantidade_tuplas[1]
+
+            quantidade_tuplas = detecta_linha(tabuleiro, cor, len(tabuleiro) - 1, diagonal, comprimento, -1, direcao)
+            qtd_seq_aberta += quantidade_tuplas[0]
+            qtd_seq_semiaberta += quantidade_tuplas[1]
+
     return qtd_seq_aberta, qtd_seq_semiaberta
 
 
+def detecta_linhas_vence(tabuleiro, cor):
+    """Retorna False se a sequencia de cores e o comprimento for 5."""
+    comprimento = 5
+
+    # teste de linhas
+    for linha in range(len(tabuleiro)):
+        if detecta_linha_vence(tabuleiro, cor, linha, 0, comprimento, 0, 1):
+            return True
+
+    # teste de colunas
+    for coluna in range(len(tabuleiro)):
+        if detecta_linha_vence(tabuleiro, cor, 0, coluna, comprimento, 1, 0):
+            return True
+
+    # teste de diagonal
+    for diagonal in range(len(tabuleiro) - 1):
+        for direcao in (1, -1):
+            if detecta_linha_vence(tabuleiro, cor, 0, diagonal, comprimento, 1, direcao):
+                return True
+            if detecta_linha_vence(tabuleiro, cor, len(tabuleiro) - 1, diagonal, comprimento, -1, direcao):
+                return True
+    return False
+
+
 def busca_max(tabuleiro):
-    # mude-me
-    return movimento_y, movimento_x
+    """Retorne as coordenadas, linha, coluna, do melhor movimento que o preto poderia fazer, dado o tabuleiro atual
+       Placa é uma matriz nxn armazenada como uma lista de listas."""
+
+    pontuacao_atual = pontuacao(tabuleiro)
+    melhor_movimento = (-1, -1)
+
+    # cria um copia do tabuleiro
+    tabuleiro_de_teste = []
+    for sublista in tabuleiro:
+        tabuleiro_de_teste.append(sublista[:])
+
+    # verifica o moviemto para a peça preta de maior pontuação
+    for movimento_y in range(len(tabuleiro_de_teste)):
+        for movimento_x in range(len(tabuleiro_de_teste)):
+            if tabuleiro_de_teste[movimento_y][movimento_x] != ' ':
+                continue
+            tabuleiro_de_teste[movimento_y][movimento_x] = 'p'
+            pontuacao_nova = pontuacao(tabuleiro_de_teste)
+            if pontuacao_nova > pontuacao_atual:
+                pontuacao_atual = pontuacao_nova
+                melhor_movimento = movimento_y, movimento_x
+            tabuleiro_de_teste[movimento_y][movimento_x] = ' '
+
+    if melhor_movimento != (-1, -1):
+        return melhor_movimento
+    # se nao tiver nenhuma jogada melhor, ele movimentará a peça para a primeira casa vazia
+    else:
+        for movimento_y in range(len(tabuleiro_de_teste)):
+            for movimento_x in range(len(tabuleiro_de_teste)):
+                if tabuleiro_de_teste[movimento_y][movimento_x] == ' ':
+                    return movimento_y, movimento_x
+    pass
 
 
 def pontuacao(tabuleiro):
@@ -171,7 +262,16 @@ def pontuacao(tabuleiro):
 
 
 def e_vitoria(tabuleiro):
-    pass
+    # retorna o resulta se a partida continua ou se houve um vencedor
+
+    if detecta_linhas_vence(tabuleiro, 'p'):
+        return "Pretas vencem"
+    elif detecta_linhas_vence(tabuleiro, 'b'):
+        return "Brancas vencem"
+    elif esta_cheia(tabuleiro):
+        return "Empate"
+    else:
+        return "Continue a jogada"
 
 
 def imprime_tabuleiro(tabuleiro):
@@ -260,7 +360,11 @@ def teste_esta_vazia():
 
 def teste_esta_limitada():
     tabuleiro = limpa_tabuleiro(8)
-    x = 5; y = 1; d_x = 0; d_y = 1; comprimento = 3
+    x = 5;
+    y = 1;
+    d_x = 0;
+    d_y = 1;
+    comprimento = 3
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, "b")
     imprime_tabuleiro(tabuleiro)
 
@@ -275,7 +379,11 @@ def teste_esta_limitada():
 
 def teste_detecta_linha():
     tabuleiro = limpa_tabuleiro(8)
-    x = 5; y = 1; d_x = 0; d_y = 1; comprimento = 3
+    x = 5;
+    y = 1;
+    d_x = 0;
+    d_y = 1;
+    comprimento = 3
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, "b")
     imprime_tabuleiro(tabuleiro)
     if detecta_linha(tabuleiro, "b", 0, x, comprimento, d_y, d_x) == (1, 0):
@@ -286,7 +394,11 @@ def teste_detecta_linha():
 
 def teste_detecta_linhas():
     tabuleiro = limpa_tabuleiro(8)
-    x = 5; y = 1; d_x = 0; d_y = 1; comprimento = 3;
+    x = 5;
+    y = 1;
+    d_x = 0;
+    d_y = 1;
+    comprimento = 3;
     cor = 'b'
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, "b")
     imprime_tabuleiro(tabuleiro)
@@ -298,9 +410,19 @@ def teste_detecta_linhas():
 
 def teste_busca_max():
     tabuleiro = limpa_tabuleiro(8)
-    x = 5; y = 0; d_x = 0; d_y = 1; comprimento = 4; cor = 'b'
+    x = 5;
+    y = 0;
+    d_x = 0;
+    d_y = 1;
+    comprimento = 4;
+    cor = 'b'
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, cor)
-    x = 6; y = 0; d_x = 0; d_y = 1; comprimento = 4; cor = 'p'
+    x = 6;
+    y = 0;
+    d_x = 0;
+    d_y = 1;
+    comprimento = 4;
+    cor = 'p'
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, cor)
     imprime_tabuleiro(tabuleiro)
     if busca_max(tabuleiro) == (4, 6):
@@ -322,7 +444,11 @@ def alguns_testes():
 
     tabuleiro[0][5] = "b"
     tabuleiro[0][6] = "p"
-    y = 5; x = 2; d_x = 0; d_y = 1; comprimento = 3
+    y = 5;
+    x = 2;
+    d_x = 0;
+    d_y = 1;
+    comprimento = 3
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, "b")
     imprime_tabuleiro(tabuleiro)
     analise(tabuleiro)
@@ -357,7 +483,10 @@ def alguns_testes():
     #       Linhas abertas de comprimento 5: 0
     #       Linhas semiabertas de comprimento 5: 0
 
-    y = 3; x = 5; d_x = -1; d_y = 1;
+    y = 3;
+    x = 5;
+    d_x = -1;
+    d_y = 1;
     comprimento = 2
 
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, "p")
@@ -394,9 +523,12 @@ def alguns_testes():
     #         Linhas semiabertas de comprimento 4: 0
     #         Linhas abertas de comprimento 5: 0
     #         Linhas semiabertas de comprimento 5: 0
-    #     
+    #
 
-    y = 5; x = 3; d_x = -1; d_y = 1;
+    y = 5;
+    x = 3;
+    d_x = -1;
+    d_y = 1;
     comprimento = 1
     por_seq_no_tabuleiro(tabuleiro, y, x, d_y, d_x, comprimento, "p");
     imprime_tabuleiro(tabuleiro);
@@ -413,8 +545,8 @@ def alguns_testes():
     #           6 | |b| | | | | *
     #           7 | |b| | | | | *
     #           *****************
-    #        
-    #        
+    #
+    #
     #        Pedras pretas:
     #        Linhas abertas de comprimento 2: 0
     #        Linhas semiabertas de comprimento 2: 0
