@@ -22,7 +22,7 @@ def esta_vazia(tabuleiro):
 def esta_cheia(tabuleiro):
     """Retorna se o tabuleiro esta cheio de peças ou não"""
     for i in range(len(tabuleiro)):
-        for j in range(tabuleiro[i]):
+        for j in range(len(tabuleiro[i])):
             if tabuleiro[i][j] == " ":
                 return False
     return True
@@ -568,4 +568,4 @@ def alguns_testes():
 
 
 if __name__ == '__main__':
-    conjunto_testes_faceis_para_main()
+    jogar_gomoku(8)
