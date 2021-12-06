@@ -54,6 +54,10 @@ def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
 
 
 def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
+    """Retorna um comprimento inteiro que é o comprimento da sequência da coluna de cores,
+       começando em (y_início, x_início) e procedendo na direção (d_y, d_x)
+       Suponha que o tabuleiro seja uma matriz nXn, col é um de 'p' ou 'b', (y_ini, x_ini) são coordenadas no
+       tabuleiro, e (d_y, d_x) é um de: (1, 0), (0, 1) ou (1, ± 1)"""
 
     y = y_ini
     x = x_ini
@@ -61,6 +65,7 @@ def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
 
     if tabuleiro[y_ini][x_ini] != cor:
         return 0
+
     for i in range(len(tabuleiro)):
         if(max(y + d_y, x + d_x) >= len(tabuleiro)) or (min(y + d_y, x + d_x) < 0) or tabuleiro[y + d_y][x + d_x] != cor:
             return comprimento
@@ -70,6 +75,11 @@ def verifica_comprimento(tabuleiro,  cor, y_ini, x_ini, d_y, d_x):
 
 
 def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
+    """ Retorna uma tupla do número de sequências ABERTAS e SEMIABERTAS de coluna de cor e comprimento de
+        comprimento na linha começando em y_ini, x_ini e continuando na direção d_y, d_x.
+        Suponha que a placa seja uma matriz nXn, cor é um de 'p' ou 'b',
+        o comprimento é um int positivo maior que um, e (d_y, d_x) é um de: (1, 0), (0, 1) ou (1, ± 1). """
+
     qtd_seq_semiaberta = 0
     qtd_seq_aberta = 0
     comprimento_atual = 0
@@ -96,7 +106,29 @@ def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
         y_ini += d_y
         x_ini += d_x
 
-    return qtd_seq_aberta, qtd_seq_semiaberta
+
+
+
+def detecta_linha_vence(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
+    """Retorna verdadeiro ou falso dependendo se as sequências de cor e comprimento 5 na linha começando em
+       y_start, x_start e procedendo na direção d_y, d_x.
+       Suponha que o Tabuleiro seja uma matriz nXn, col é um de 'p' ou 'b',
+       o comprimento é 5 e (d_y, d_x) é um de: (1, 0), (0, 1) ou (1, ± 1)"""
+    comprimento_atual = 0
+    resultado = False
+
+    for i in range(len(tabuleiro) + 1):
+        if y_ini + d_y > len(tabuleiro) or x_ini + d_x > len(tabuleiro) or y_ini + d_y < 0 or x_ini + d_x < 0:
+            return resultado
+        elif tabuleiro[y_ini][x_ini] == cor:
+            comprimento_atual = verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x)
+            if comprimento == comprimento_atual:
+                resultado = True
+            else:
+                y_ini += (comprimento_atual - 1) * d_y
+                x_ini += (comprimento_atual - 1) * d_x
+        y_ini += d_y
+        x_ini += d_x
 
 
 def detecta_linhas(tabuleiro, cor, comprimento):
