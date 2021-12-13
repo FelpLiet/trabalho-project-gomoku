@@ -1,2 +1,2 @@
 # trabalho-project-gomoku
-Uma IA imcompleta para jogar gomoku
+Uma IA incompleta para jogar gomoku
