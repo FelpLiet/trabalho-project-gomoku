@@ -12,6 +12,7 @@ Outras funções tem "mude-me".
 
 
 def esta_vazia(tabuleiro):
+    '''Retorna True caso o tabuleiro esteja vazio'''
     for i in range(len(tabuleiro)):
         for j in range(len(tabuleiro[i])):
             if tabuleiro[i][j] != " ":
@@ -20,7 +21,8 @@ def esta_vazia(tabuleiro):
 
 
 def esta_cheia(tabuleiro):
-    """Retorna se o tabuleiro esta cheio de peças ou não"""
+    """Retorna True ou False dependendo se o tabuleiro esta cheio de peças ou não"""
+
     for i in range(len(tabuleiro)):
         for j in range(len(tabuleiro[i])):
             if tabuleiro[i][j] == " ":
@@ -30,6 +32,7 @@ def esta_cheia(tabuleiro):
 
 def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
     """Restorna se a sequencia esta aberta, fechada ou semiaberta de acordo com a posicao dela"""
+
     estado_incial = ""
     estado_final = ""
 
@@ -65,9 +68,7 @@ def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
 
 def verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x):
     """Retorna um comprimento inteiro que é o comprimento da sequência da coluna de cores,
-       começando em (y_início, x_início) e procedendo na direção (d_y, d_x)
-       Suponha que o tabuleiro seja uma matriz nXn, col é um de 'p' ou 'b', (y_ini, x_ini) são coordenadas no
-       tabuleiro, e (d_y, d_x) é um de: (1, 0), (0, 1) ou (1, ± 1)"""
+       começando em (y_início, x_início) e procedendo na direção (d_y, d_x)."""
 
     y = y_ini
     x = x_ini
@@ -87,9 +88,7 @@ def verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x):
 
 def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
     """ Retorna uma tupla do número de sequências ABERTAS e SEMIABERTAS de coluna de cor e comprimento de
-        comprimento na linha começando em y_ini, x_ini e continuando na direção d_y, d_x.
-        Suponha que a placa seja uma matriz nXn, cor é um de 'p' ou 'b',
-        o comprimento é um int positivo maior que um, e (d_y, d_x) é um de: (1, 0), (0, 1) ou (1, ± 1). """
+        comprimento na linha começando em y_ini, x_ini e continuando na direção d_y, d_x."""
 
     qtd_seq_semiaberta = 0
     qtd_seq_aberta = 0
@@ -120,9 +119,8 @@ def detecta_linha(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
 
 def detecta_linha_vence(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
     """Retorna verdadeiro ou falso dependendo se as sequências de cor e comprimento 5 na linha começando em
-       y_start, x_start e procedendo na direção d_y, d_x.
-       Suponha que o Tabuleiro seja uma matriz nXn, col é um de 'p' ou 'b',
-       o comprimento é 5 e (d_y, d_x) é um de: (1, 0), (0, 1) ou (1, ± 1)"""
+       y_start, x_start e procedendo na direção d_y, d_x."""
+    
     comprimento_atual = 0
     resultado = False
 
@@ -141,12 +139,10 @@ def detecta_linha_vence(tabuleiro, cor, y_ini, x_ini, comprimento, d_y, d_x):
 
 
 def detecta_linhas(tabuleiro, cor, comprimento):
-    """Retorne uma tupla do número de sequências abertas e semiabertas de cores e comprimentos a bordo.
-       Suponha que placa seja uma matriz nxn, col é um de 'p' ou 'b' e o comprimento é um int positivo maior
-       que um e menor que 6.
-       Board é uma matriz nxn armazenada como uma lista de listas,
-       col é um de 'p' ou 'b' e o comprimento é um int positivo maior que um. """
-    qtd_seq_aberta, qtd_seq_semiaberta = 0, 0
+    """Retorne uma tupla do número de sequências abertas e semiabertas de cores e comprimentos no tabuleiro."""
+    
+    qtd_seq_aberta = 0
+    qtd_seq_semiaberta = 0
 
     # teste de linhas
     for linha in range(len(tabuleiro)):
@@ -175,7 +171,9 @@ def detecta_linhas(tabuleiro, cor, comprimento):
 
 
 def detecta_linhas_vence(tabuleiro, cor):
-    """Retorna False se a sequencia de cores e o comprimento for 5."""
+    """Retorna False ou True se a sequencia de cores e o comprimento for 5 na linha 
+    e iniciam em y_ini, x_ini indo em direção a d_y, d_x."""
+    
     comprimento = 5
 
     # teste de linhas
@@ -199,8 +197,7 @@ def detecta_linhas_vence(tabuleiro, cor):
 
 
 def busca_max(tabuleiro):
-    """Retorne as coordenadas, linha, coluna, do melhor movimento que o preto poderia fazer, dado o tabuleiro atual
-       Placa é uma matriz nxn armazenada como uma lista de listas."""
+    """Retorne as coordenadas, linha, coluna, do melhor movimento que o preto poderia fazer, dado o tabuleiro atual."""
 
     pontuacao_atual = pontuacao(tabuleiro)
     melhor_movimento = (-1, -1)
@@ -262,7 +259,7 @@ def pontuacao(tabuleiro):
 
 
 def e_vitoria(tabuleiro):
-    # retorna o resulta se a partida continua ou se houve um vencedor
+    '''retorna o resulta se a partida continua ou se houve um vencedor'''
 
     if detecta_linhas_vence(tabuleiro, 'p'):
         return "Pretas vencem"
