@@ -68,7 +68,7 @@ def esta_limitada(tabuleiro, y_fim, x_fim, comprimento, d_y, d_x):
 
 def verifica_comprimento(tabuleiro, cor, y_ini, x_ini, d_y, d_x):
     """Retorna um comprimento inteiro que é o comprimento da sequência da coluna de cores,
-       começando em (y_início, x_início) e procedendo na direção (d_y, d_x)."""
+       começando em y_início, x_início e procedendo na direção d_y, d_x."""
 
     y = y_ini
     x = x_ini
